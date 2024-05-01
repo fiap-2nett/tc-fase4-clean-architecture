@@ -1,0 +1,30 @@
+version: '3.4'
+
+services:
+  helpdesk.db:
+    volumes:
+      - ./.containers/sqlserver:/var/opt/mssql/data
+    ports:
+      - "1433:1433"
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=yourStrong(!)Password
+
+  helpdesk.apiservice.api:  
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=helpdesk
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/root/.aspnet/https/helpdesk.pfx
+      - ConnectionStrings__HelpDeskDb=Server=helpdesk.db,1433;Database=HelpDeskDb;User=sa;Password=yourStrong(!)Password;Encrypt=False;
+      - Jwt__Issuer=https://helpdesk.apiservice.api/
+      - Jwt__Audience=https://helpdesk.apiservice.api/
+      - Jwt__Security=WvvWzuqwJ5DvDGaRRVnKCuL2k35aEhiY0qoKR7qj0gVn3f6PxwPnhbB2VPp82gLH
+      - Jwt__TokenExpirationInMinutes=60      
+    depends_on:
+      - helpdesk.db      
+    ports:
+      - "5001:443"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ./docker/aspnet/https:/root/.aspnet/https:ro

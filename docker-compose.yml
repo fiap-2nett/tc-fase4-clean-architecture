@@ -1,0 +1,14 @@
+version: '3.4'
+
+services:
+  helpdesk.db:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: helpdesk.db
+
+  helpdesk.apiservice.api:
+    image: ${DOCKER_REGISTRY-}helpdesk-apiservice-api
+    container_name: helpdesk.apiservice.api
+    build:
+      context: .
+      dockerfile: src/HelpDesk.ApiService.Api/Dockerfile
+

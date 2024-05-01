@@ -1,0 +1,6 @@
+version: '3.4'
+
+services:
+  helpdesk.apiservice.api:
+    volumes:
+      - ./docker/aspnet/https:/root/.aspnet/https:ro
