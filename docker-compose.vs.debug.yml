@@ -4,3 +4,7 @@ services:
   helpdesk.apiservice.api:
     volumes:
       - ./docker/aspnet/https:/root/.aspnet/https:ro
+
+  helpdesk.appservice.web:
+    volumes:
+      - ./docker/aspnet/https:/root/.aspnet/https:ro

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Serilog;
 
 namespace HelpDesk.ApiService.Api
 {
@@ -14,6 +15,9 @@ namespace HelpDesk.ApiService.Api
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Host.UseSerilog((context, config) =>
+                config.ReadFrom.Configuration(context.Configuration));
 
             builder.Services
                 .AddApplication()
@@ -38,6 +42,7 @@ namespace HelpDesk.ApiService.Api
             app.EnsureDatabaseCreated();
             app.UseCustomExceptionHandler();
             app.UseHttpsRedirection();
+            app.UseSerilogRequestLogging();
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();

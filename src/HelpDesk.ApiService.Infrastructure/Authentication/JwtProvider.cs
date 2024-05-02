@@ -37,9 +37,10 @@ namespace HelpDesk.ApiService.Infrastructure.Authentication
             var userClaims = new Claim[]
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.Name.ToString()),
-                new Claim(ClaimTypes.Surname, user.Surname.ToString()),
-                new Claim(ClaimTypes.Email, user.Email.ToString())
+                new Claim(ClaimTypes.Name, user.Name),
+                new Claim(ClaimTypes.Surname, user.Surname),
+                new Claim(ClaimTypes.Email, user.Email.Value),
+                new Claim(ClaimTypes.Role, user.IdRole.ToString())
             };
 
             var tokenExpirationTime = DateTime.UtcNow.AddMinutes(_jwtSettings.TokenExpirationInMinutes);
