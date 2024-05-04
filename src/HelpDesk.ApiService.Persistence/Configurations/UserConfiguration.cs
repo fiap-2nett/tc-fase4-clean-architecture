@@ -4,7 +4,6 @@ using System.Linq;
 using HelpDesk.ApiService.Domain.Entities;
 using HelpDesk.ApiService.Domain.Enumerations;
 using HelpDesk.ApiService.Domain.ValueObjects;
-using HelpDesk.ApiService.Infrastructure.Cryptography;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -12,8 +11,6 @@ namespace HelpDesk.ApiService.Persistence.Configurations
 {
     internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
     {
-        private readonly PasswordHasher _passwordHasher = new PasswordHasher();
-
         public void Configure(EntityTypeBuilder<User> builder)
         {
             builder.ToTable("users");

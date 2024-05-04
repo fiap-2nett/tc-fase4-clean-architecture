@@ -3,8 +3,14 @@
     "Docker Compose": {
       "commandName": "DockerCompose",
       "commandVersion": "1.0",
-      "serviceActions": {        
-        "helpdesk.apiservice.api": "StartDebugging"
+      "composeLaunchAction": "LaunchBrowser",
+      "composeLaunchServiceName": "helpdesk.appservice.web",
+      "composeLaunchUrl": "{Scheme}://localhost:{ServicePort}",
+      "serviceActions": {
+        "helpdesk.db": "StartWithoutDebugging",
+        "helpdesk.log": "StartWithoutDebugging",
+        "helpdesk.apiservice.api": "StartDebugging",
+        "helpdesk.appservice.web": "StartDebugging"
       }
     }
   }
