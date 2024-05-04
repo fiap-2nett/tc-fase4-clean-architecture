@@ -51,8 +51,8 @@ services:
       - ExternalService__TokenName=HelpDeskApi.Token
       - ExternalService__RequestTimeoutInSeconds=120
     depends_on:
-      - helpdesk.apiservice.api
       - helpdesk.log
+      - helpdesk.apiservice.api
     ports:
       - "5002:443"
     volumes:

@@ -1,8 +1,71 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model PagedListResponseModel<TicketModel>
+@using HelpDesk.AppService.Application.Core.Abstractions.ExternalService.Models
+@using HelpDesk.AppService.Web.Controllers
+
+@{
+    ViewData["Title"] = "Dashboard - Tickets";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+@* ************** Content ************** *@
+<h4 class="py-3 mb-4">
+    <span class="text-muted fw-light">Dashboard /</span> Tickets
+</h4>
+
+<div class="row mb-3">
+    <div class="col-12 d-flex justify-content-md-end">
+        <a asp-controller="Ticket" asp-action="@nameof(TicketController.Create)" class="btn btn-primary">Create Ticket</a>
+    </div>
 </div>
+
+<!-- Tickets Table -->
+<div class="card">
+    <h5 class="card-header">Tickets List</h5>     
+    <div class="table-responsive text-nowrap">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Description</th>
+                    <th>Category</th>
+                    <th>Status</th>
+                    <th>Requested by</th>
+                    <th>Assigned by</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody class="table-border-bottom-0">
+                @if (Model?.Items?.Any() ?? false)
+                {
+                    @foreach (var ticket in Model.Items)
+                    {
+                        <tr>
+                            <td>@ticket.IdTicket</td>
+                            <td>@ticket.Description</td>
+                            <td>@ticket.Category?.Name</td>
+                            <td>@ticket.Status?.Name</td>
+                            <td>@ticket.IdUserRequester</td>
+                            <td>@ticket.IdUserAssigned</td>
+                            <td>
+                                <div class="dropdown">
+                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="bx bx-dots-vertical-rounded"></i></button>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item" asp-action="@nameof(TicketController.Edit)" asp-controller="Ticket" asp-route-id="@ticket.IdTicket"><i class="bx bx-edit-alt me-1"></i> Edit</a>
+                                        <hr class="dropdown-divider" />
+                                        <a class="dropdown-item" href="javascript:void(0);" id="btnAssignTo"><i class="bx bx-user-plus me-1"></i> Assign to ...</a>
+                                        <a class="dropdown-item" href="javascript:void(0);" id="btnAssignToMe"><i class="bx bx-user-check me-1"></i> Assign to Me</a>
+                                        <hr class="dropdown-divider" />
+                                        <a class="dropdown-item" href="javascript:void(0);" id="btnChangeStatusTo"><i class="bx bx-refresh me-1"></i> Status to ...</a>
+                                        <a class="dropdown-item" href="javascript:void(0);" id="btnChangeStatusToComplete"><i class="bx bx-check-shield me-1"></i> Status to Complete</a>
+                                        <hr class="dropdown-divider" />
+                                        <a class="dropdown-item" href="javascript:void(0);" id="btnCancelTicket"><i class="bx bx-trash me-1"></i> Cancel</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<!--/ Status Table -->

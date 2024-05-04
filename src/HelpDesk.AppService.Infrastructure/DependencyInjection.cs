@@ -40,8 +40,8 @@ namespace HelpDesk.AppService.Infrastructure
                     options.Cookie.SameSite = SameSiteMode.Lax;
                     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 
-                    options.LoginPath = new PathString("/account/login");
-                    options.LogoutPath = new PathString("/account/logout");
+                    options.LoginPath = new PathString("/Account/Login");
+                    options.LogoutPath = new PathString("/Account/Logout");
 
                     options.SlidingExpiration = true;
                     options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
