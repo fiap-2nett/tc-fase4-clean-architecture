@@ -1,5 +1,7 @@
+using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using HelpDesk.AppService.Application.Core.Abstractions.Services;
 using HelpDesk.AppService.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,18 +10,30 @@ namespace HelpDesk.AppService.Web.Controllers
 {
     [Authorize]    
     public class HomeController : Controller
-    {        
-        public HomeController()
-        { }
+    {
+        #region Read-Only Fields
 
-        public async Task<IActionResult> Index()
+        private readonly ITicketService _ticketService;
+
+        #endregion
+
+        #region Constructors
+
+        public HomeController(ITicketService ticketService)
         {
-            return View();
+            _ticketService = ticketService ?? throw new ArgumentNullException(nameof(ticketService));
         }
 
-        public IActionResult Privacy()
+        #endregion
+
+        #region Controller Actions
+
+        [HttpGet]
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var model = await _ticketService.GetTicketsAsync();
+            return View(model);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
@@ -27,5 +41,7 @@ namespace HelpDesk.AppService.Web.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        #endregion
     }
 }

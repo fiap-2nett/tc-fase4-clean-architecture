@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace HelpDesk.AppService.Web.Models.AccountViewModels
 {
-    public class ResetPasswordViewModel
+    public class ChangePasswordViewModel
     {
         [Required]
         [EmailAddress]
@@ -16,8 +16,6 @@ namespace HelpDesk.AppService.Web.Models.AccountViewModels
         [DataType(DataType.Password)]
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
-        public string ConfirmPassword { get; set; }
-
-        public string Code { get; set; }
+        public string ConfirmPassword { get; set; }        
     }
 }

@@ -23,6 +23,8 @@ namespace HelpDesk.AppService.Application.Services
         private readonly ILogger _logger;
         private readonly IJwtProvider _jwtProvider;
         private readonly IHttpContextAccessor _httpContextAccessor;
+
+        private readonly ExternalService.IUserService _userService;
         private readonly ExternalService.IAuthenticationService _authenticationService;
 
         #endregion
@@ -33,12 +35,15 @@ namespace HelpDesk.AppService.Application.Services
             ILogger<AccountService> logger,
             IJwtProvider jwtProvider,
             IHttpContextAccessor httpContextAccessor,
+            ExternalService.IUserService userService,
             ExternalService.IAuthenticationService authenticationService
         )
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _jwtProvider = jwtProvider ?? throw new ArgumentNullException(nameof(jwtProvider));
             _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
+
+            _userService = userService ?? throw new ArgumentNullException(nameof(userService));
             _authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
         }
 
@@ -84,6 +89,15 @@ namespace HelpDesk.AppService.Application.Services
             return (true, null);
         }
 
+        public async Task<(bool IsSuccess, DetailedUserModel User, ErrorModel[] Errors)> GetAsync()
+            => await _userService.GetMyProfileAsync();
+
+        public async Task<(bool IsSuccess, ErrorModel[] Errors)> UpdateAsync(string name, string surname)
+            => await _userService.UpdateAsync(name, surname);
+
+        public async Task<(bool IsSuccess, ErrorModel[] Errors)> ChangePasswordAsync(string password)
+            => await _userService.ChangePasswordAsync(password);
+
         #endregion
 
         #region Private Methods
@@ -102,7 +116,7 @@ namespace HelpDesk.AppService.Application.Services
                 var authenticationToken = new AuthenticationToken { Name = tokenName, Value = token };
                 var props = new AuthenticationProperties
                 {
-                    AllowRefresh = true,
+                    AllowRefresh = false,
                     IsPersistent = isPersistent,
                     ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(30)
                 };

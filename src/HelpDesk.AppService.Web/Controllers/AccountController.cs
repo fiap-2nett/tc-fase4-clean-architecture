@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using HelpDesk.AppService.Application.Core.Abstractions.Services;
+using HelpDesk.AppService.Web.Extensions;
 using HelpDesk.AppService.Web.Models.AccountViewModels;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -13,12 +14,22 @@ namespace HelpDesk.AppService.Web.Controllers
     [Route("[controller]/[action]")]
     public class AccountController : Controller
     {
+        #region Read-Only Fields
+
         private readonly IAccountService _accountService;
+
+        #endregion
+
+        #region Constructors
 
         public AccountController(IAccountService accountService)
         {
             _accountService = accountService ?? throw new ArgumentNullException(nameof(accountService));
         }
+
+        #endregion
+
+        #region Controller Actions
 
         [HttpGet]
         [AllowAnonymous]
@@ -67,66 +78,72 @@ namespace HelpDesk.AppService.Web.Controllers
 
             if (ModelState.IsValid)
             {
-                //var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
-                //var result = await _userManager.CreateAsync(user, model.Password);
-                //if (result.Succeeded)
-                //{
-                //    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                //    var callbackUrl = Url.EmailConfirmationLink(user.Id, code, Request.Scheme);
-                //    await _emailSender.SendEmailConfirmationAsync(model.Email, callbackUrl);
+                var result = await _accountService.RegisterAsync(model.Name, model.Surname, model.Email, model.Password);
+                if (result.IsSuccess)
+                    return RedirectToLocal(returnUrl);
 
-                //    await _signInManager.SignInAsync(user, isPersistent: false);
-
-                //    return RedirectToLocal(returnUrl);
-                //}
-
-                //AddErrors(result);
+                ModelState.AddErrors(result.Errors);
             }
 
             return View(model);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpGet]        
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction(nameof(HomeController.Index), "Home");
         }
 
-        [HttpGet]
-        [AllowAnonymous]
-        public IActionResult ResetPassword(string code = null)
+        [HttpPost]        
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
         {
-            if (code == null)
-                throw new ApplicationException("A code must be supplied for password reset.");
+            if (ModelState.IsValid)
+            {
+                var result = await _accountService.ChangePasswordAsync(model.Password);
+                if (!result.IsSuccess)
+                    ModelState.AddErrors(result.Errors);
+            }
 
-            var model = new ResetPasswordViewModel { Code = code };
+            return PartialView("~/Views/Account/_Partials/_ChangePassword", model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Settings()
+        {
+            var result = await _accountService.GetAsync();
+            if (!result.IsSuccess)
+                throw new Exception("An error occurred while processing the request.");
+
+            var model = (SettingsViewModel)result.User;
+
             return View(model);
         }
 
-        [HttpPost]        
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        public async Task<IActionResult> Settings(SettingsViewModel model)
         {
-            if (!ModelState.IsValid)
-                return View(model);
+            if (ModelState.IsValid)
+            {
+                var result = await _accountService.UpdateAsync(model.Name, model.Surname);
+                if (!result.IsSuccess)
+                    ModelState.AddErrors(result.Errors);
+            }
 
-            //var user = await _userManager.FindByEmailAsync(model.Email);
-            //if (user is null)            
-            //    return RedirectToAction(nameof(ResetPasswordConfirmation));
-
-            //var result = await _userManager.ResetPasswordAsync(user, model.Code, model.Password);
-            //if (result.Succeeded)
-            //    return RedirectToAction(nameof(ResetPasswordConfirmation));
-
-            //AddErrors(result);
-            return View();
+            return View(model);
         }
+
+        #endregion
+
+        #region Private Methods
 
         private IActionResult RedirectToLocal(string returnUrl)
             => Url.IsLocalUrl(returnUrl)
                 ? Redirect(returnUrl)
                 : RedirectToAction(nameof(HomeController.Index), "Home");
+
+        #endregion
     }
 }

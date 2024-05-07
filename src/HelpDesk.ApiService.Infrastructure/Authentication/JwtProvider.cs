@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Text;
 using HelpDesk.ApiService.Application.Core.Abstractions.Authentication;
 using HelpDesk.ApiService.Domain.Entities;
+using HelpDesk.ApiService.Domain.Enumerations;
 using HelpDesk.ApiService.Infrastructure.Authentication.Settings;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -40,9 +41,9 @@ namespace HelpDesk.ApiService.Infrastructure.Authentication
                 new Claim(ClaimTypes.Name, user.Name),
                 new Claim(ClaimTypes.Surname, user.Surname),
                 new Claim(ClaimTypes.Email, user.Email.Value),
-                new Claim(ClaimTypes.Role, user.IdRole.ToString())
+                new Claim(ClaimTypes.Role, ((UserRoles)user.IdRole).ToString())
             };
-
+            
             var tokenExpirationTime = DateTime.UtcNow.AddMinutes(_jwtSettings.TokenExpirationInMinutes);
 
             var token = new JwtSecurityToken(
