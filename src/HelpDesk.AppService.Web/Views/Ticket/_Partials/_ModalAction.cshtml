@@ -1,0 +1,85 @@
+﻿@model TicketActionViewModel
+
+@using HelpDesk.AppService.Application.Core.Abstractions.Services
+@using HelpDesk.AppService.Web.Controllers
+@using HelpDesk.AppService.Web.Enumerators
+@using HelpDesk.AppService.Web.Models.TicketViewModels
+@using HelpDesk.AppService.Web.Extensions
+
+@inject ITicketService _ticketService
+
+@{
+    var modalTitle = ((ActionType)Model.IdActionType) switch
+    {
+        ActionType.AssignTo => "Assign ticket to...",
+        ActionType.ChangeStatusTo => "Change ticket status to...",
+        ActionType.Cancellation => "Ticket cancellation",
+        _ => throw new ArgumentException("Invalid ActionType")
+    };
+
+    var statusList = (await _ticketService.GetTicketStatusAsync()).ToSelectList(
+        text => text.Name,
+        value => value.IdStatus.ToString()
+    );
+}
+
+
+
+
+
+<div class="modal-dialog modal-dialog-centered" role="document">
+    <form id="formTicketAction" class="modal-content" asp-controller="Ticket" asp-action="@nameof(TicketController.DoActionTicket)" asp-route-id="@Model.IdTicket" method="POST">
+        <input type="hidden" asp-for="IdTicket" />
+        <input type="hidden" asp-for="IdActionType" />
+
+        <div class="modal-header">
+            <h5 class="modal-title" id="modalCenterTitle">@modalTitle</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+
+            @if (Model.IdActionType == 3)
+            {                
+                <div class="row">
+                    <div class="mb-3">
+                        <label class="form-label" asp-for="IdStatusChanged">Change to</label>
+                        @Html.DropDownListFor(m => m.IdStatusChanged, statusList, "Select Status", new { @class = "form-select" })
+                    </div>
+                </div>
+            }
+
+            @if (Model.IdActionType == 5)
+            {                
+                <div class="row">
+                    <div class="mb-3">
+                        <label class="form-label" asp-for="CancellationReason">Reason for cancellation</label>
+                        <textarea class="form-control" asp-for="CancellationReason" placeholder="Enter cancellation details."></textarea>
+                    </div>
+                </div>
+            }
+
+
+
+@*             <div class="row">
+                <div class="col mb-3">
+                    <label for="nameWithTitle" class="form-label">Name</label>
+                    <input type="text" id="nameWithTitle" class="form-control" placeholder="Enter Name">
+                </div>
+            </div>
+            <div class="row g-2">
+                <div class="col mb-0">
+                    <label for="emailWithTitle" class="form-label">Email</label>
+                    <input type="email" id="emailWithTitle" class="form-control" placeholder="xxxx&#64;xxx.xx">
+                </div>
+                <div class="col mb-0">
+                    <label for="dobWithTitle" class="form-label">DOB</label>
+                    <input type="date" id="dobWithTitle" class="form-control">
+                </div>
+            </div> *@
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary" id="btnSubmitAction">Save changes</button>
+        </div>
+    </form>
+</div>

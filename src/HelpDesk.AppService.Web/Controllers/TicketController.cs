@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using HelpDesk.AppService.Application.Core.Abstractions.Services;
 using HelpDesk.AppService.Application.Services;
+using HelpDesk.AppService.Web.Enumerators;
 using HelpDesk.AppService.Web.Extensions;
 using HelpDesk.AppService.Web.Models.AccountViewModels;
 using HelpDesk.AppService.Web.Models.TicketViewModels;
@@ -88,6 +89,44 @@ namespace HelpDesk.AppService.Web.Controllers
             }
 
             return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetActionModal(int ticketId, byte actionType)
+        {            
+            var model = new TicketActionViewModel { IdTicket = ticketId, IdActionType = actionType };
+
+            return Json(new
+            {
+                partialView = await this.RenderViewToStringAsync("~/Views/Ticket/_Partials/_ModalAction.cshtml", model)
+            });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DoActionTicket([FromRoute] int id, TicketActionViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+
+                var result = (ActionType)model.IdActionType switch
+                {
+                    ActionType.AssignTo => await _ticketService.AssignToAsync(model.IdTicket, model.IdUserAssigned.Value),
+                    ActionType.AssignToMe => await _ticketService.AssignToMeAsync(model.IdTicket),
+                    ActionType.ChangeStatusTo => await _ticketService.ChangeStatusAsync(model.IdTicket, model.IdStatusChanged.Value),
+                    ActionType.ChangeStatusToComplete => await _ticketService.CompleteAsync(model.IdTicket),
+                    ActionType.Cancellation => await _ticketService.CancelAsync(model.IdTicket, model.CancellationReason),
+                    _ => throw new ArgumentException("Invalid ActionType")
+                };
+
+                return Json(new { result.IsSuccess, result.Errors });
+            }
+
+
+            return Json(new
+            {
+                IsSuccess = false
+            });
         }
 
         #endregion        

@@ -1,9 +1,21 @@
 ﻿@model PagedListResponseModel<TicketModel>
 @using HelpDesk.AppService.Application.Core.Abstractions.ExternalService.Models
 @using HelpDesk.AppService.Web.Controllers
+@using HelpDesk.AppService.Web.Enumerators
 
 @{
     ViewData["Title"] = "Dashboard - Tickets";
+
+    string GetStatusBadge(StatusModel model) => model?.IdStatus switch
+    {
+        1 => "badge bg-primary",    /* New */
+        2 => "badge bg-info",       /* Assigned */
+        3 => "badge bg-warning",    /* InProgress */
+        4 => "badge bg-dark",       /* OnHold */
+        5 => "badge bg-success",    /* Completed */
+        6 => "badge bg-danger",     /* Cancelled */
+        _ => "badge bg-primary"
+    };
 }
 
 @* ************** Content ************** *@
@@ -37,12 +49,12 @@
                 @if (Model?.Items?.Any() ?? false)
                 {
                     @foreach (var ticket in Model.Items)
-                    {
+                    {                        
                         <tr>
                             <td>@ticket.IdTicket</td>
                             <td>@ticket.Description</td>
                             <td>@ticket.Category?.Name</td>
-                            <td>@ticket.Status?.Name</td>
+                            <td><span class="@GetStatusBadge(ticket.Status)">@ticket.Status?.Name</span></td>
                             <td>@ticket.IdUserRequester</td>
                             <td>@ticket.IdUserAssigned</td>
                             <td>
@@ -51,13 +63,13 @@
                                     <div class="dropdown-menu">
                                         <a class="dropdown-item" asp-action="@nameof(TicketController.Edit)" asp-controller="Ticket" asp-route-id="@ticket.IdTicket"><i class="bx bx-edit-alt me-1"></i> Edit</a>
                                         <hr class="dropdown-divider" />
-                                        <a class="dropdown-item" href="javascript:void(0);" id="btnAssignTo"><i class="bx bx-user-plus me-1"></i> Assign to ...</a>
-                                        <a class="dropdown-item" href="javascript:void(0);" id="btnAssignToMe"><i class="bx bx-user-check me-1"></i> Assign to Me</a>
+                                        <a class="dropdown-item hd-action-button" href="javascript:void(0);" data-ticket-id="@ticket.IdTicket" data-action-type="@((byte)ActionType.AssignTo)"><i class="bx bx-user-plus me-1"></i> Assign to ...</a>
+                                        <a class="dropdown-item hd-action-button" href="javascript:void(0);" data-ticket-id="@ticket.IdTicket" data-action-type="@((byte)ActionType.AssignToMe)"><i class="bx bx-user-check me-1"></i> Assign to Me</a>
                                         <hr class="dropdown-divider" />
-                                        <a class="dropdown-item" href="javascript:void(0);" id="btnChangeStatusTo"><i class="bx bx-refresh me-1"></i> Status to ...</a>
-                                        <a class="dropdown-item" href="javascript:void(0);" id="btnChangeStatusToComplete"><i class="bx bx-check-shield me-1"></i> Status to Complete</a>
+                                        <a class="dropdown-item hd-action-button" href="javascript:void(0);" data-ticket-id="@ticket.IdTicket" data-action-type="@((byte)ActionType.ChangeStatusTo)"><i class="bx bx-refresh me-1"></i> Status to ...</a>
+                                        <a class="dropdown-item hd-action-button" href="javascript:void(0);" data-ticket-id="@ticket.IdTicket" data-action-type="@((byte)ActionType.ChangeStatusToComplete)"><i class="bx bx-check-shield me-1"></i> Status to Complete</a>
                                         <hr class="dropdown-divider" />
-                                        <a class="dropdown-item" href="javascript:void(0);" id="btnCancelTicket"><i class="bx bx-trash me-1"></i> Cancel</a>
+                                        <a class="dropdown-item hd-action-button" href="javascript:void(0);" data-ticket-id="@ticket.IdTicket" data-action-type="@((byte)ActionType.Cancellation)"><i class="bx bx-trash me-1"></i> Cancel</a>
                                     </div>
                                 </div>
                             </td>
@@ -67,5 +79,11 @@
             </tbody>
         </table>
     </div>
+
+    <!-- Model Actions -->
+    <div class="modal fade" id="modalActions" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">        
+    </div>
+    <!--/ Model Actions -->
+
 </div>
-<!--/ Status Table -->
+<!--/ Tickets Table -->

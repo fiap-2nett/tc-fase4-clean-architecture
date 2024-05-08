@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using HelpDesk.AppService.Application.Core.Abstractions.Services;
-using ExternalService = HelpDesk.AppService.Application.Core.Abstractions.ExternalService;
 using HelpDesk.AppService.Application.Core.Abstractions.ExternalService.Models;
+using HelpDesk.AppService.Application.Core.Abstractions.Services;
+using Microsoft.Extensions.Logging;
+using ExternalService = HelpDesk.AppService.Application.Core.Abstractions.ExternalService;
 
 
 namespace HelpDesk.AppService.Application.Services
@@ -59,6 +57,21 @@ namespace HelpDesk.AppService.Application.Services
 
         public async Task<(bool IsSuccess, ErrorModel[] Errors)> UpdateAsync(int idTicket, int idCategory, string description)
             => await _ticketService.UpdateAsync(idTicket, idCategory, description);
+
+        public async Task<(bool IsSuccess, ErrorModel[] Errors)> AssignToMeAsync(int idTicket)
+            => await _ticketService.AssignToMeAsync(idTicket);
+
+        public async Task<(bool IsSuccess, ErrorModel[] Errors)> AssignToAsync(int idTicket, int idUserAssigned)
+            => await _ticketService.AssignToAsync(idTicket, idUserAssigned);
+
+        public async Task<(bool IsSuccess, ErrorModel[] Errors)> CompleteAsync(int idTicket)
+            => await _ticketService.CompleteAsync(idTicket);
+
+        public async Task<(bool IsSuccess, ErrorModel[] Errors)> ChangeStatusAsync(int idTicket, byte idStatus)
+            => await _ticketService.ChangeStatusAsync(idTicket, idStatus);
+
+        public async Task<(bool IsSuccess, ErrorModel[] Errors)> CancelAsync(int idTicket, string cancellationReason)
+            => await _ticketService.CancelAsync(idTicket, cancellationReason);
 
         #endregion
     }
