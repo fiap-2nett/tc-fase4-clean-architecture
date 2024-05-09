@@ -14,7 +14,7 @@ namespace HelpDesk.AppService.Application.Core.Abstractions.Services
         Task<PagedListResponseModel<TicketModel>> GetTicketsAsync(int page = 1, int pageSize = 10);
         Task<(bool IsSuccess, DetailedTicketModel Ticket, ErrorModel[] Errors)> GetByIdAsync(int idTicket);
 
-        Task<(bool IsSuccess, int IdTicket, ErrorModel[] Errors)> CreateAsync(int idCategory, string description);
+        Task<(bool IsSuccess, ErrorModel[] Errors)> CreateAsync(int idCategory, string description);
         Task<(bool IsSuccess, ErrorModel[] Errors)> UpdateAsync(int idTicket, int idCategory, string description);
 
         Task<(bool IsSuccess, ErrorModel[] Errors)> AssignToMeAsync(int idTicket);

@@ -8,6 +8,7 @@ namespace HelpDesk.AppService.Application
     {
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
+            services.AddScoped<IUserService, UserService>();
             services.AddScoped<ITicketService, TicketService>();
             services.AddScoped<IAccountService, AccountService>();
 

@@ -46,11 +46,14 @@ namespace HelpDesk.AppService.Application.Services
         public async Task<IEnumerable<StatusModel>> GetTicketStatusAsync()
             => await _statusService.GetAsync();
 
-        public async Task<PagedListResponseModel<TicketModel>> GetTicketsAsync(int page = 1, int pageSize = 10)
+        public async Task<PagedListResponseModel<TicketModel>> GetTicketsAsync(int page = 1, int pageSize = int.MaxValue)
             => await _ticketService.GetAsync(page, pageSize);
 
-        public async Task<(bool IsSuccess, int IdTicket, ErrorModel[] Errors)> CreateAsync(int idCategory, string description)
-            => await _ticketService.CreateAsync(idCategory, description);
+        public async Task<(bool IsSuccess, ErrorModel[] Errors)> CreateAsync(int idCategory, string description)
+        {
+            var result = await _ticketService.CreateAsync(idCategory, description);
+            return (result.IsSuccess, result.Errors);
+        }
 
         public async Task<(bool IsSuccess, DetailedTicketModel Ticket, ErrorModel[] Errors)> GetByIdAsync(int idTicket)
             => await _ticketService.GetByIdAsync(idTicket);
