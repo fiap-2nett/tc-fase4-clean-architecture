@@ -2,15 +2,27 @@
 
 TODO: Arquivo README precisa ser revisitado e atualizado
 
-<!--
-# CI/CD Pipeline
+# Clean Architecture
 
-Com o objetivo de manter o foco na criação de uma CI/CD Pipeline utilizando Github Actions que
-é um dos entregáveis necessários para o Tech Challenge Fase 2. Foi reaproveitado o trabalho entregue no Tech Challenge Fase 1.
+Com o objetivo de manter o foco na criação de uma solução aderente ao Clean Architecture (Arquitetura Limpa) que é um dos entregáveis
+do Tech Challenge 4. Foi reaproveitado o trabalho entregue no Tech Challenge 2 
 
 Caso queira verificar o projeto entregue na fase anterior, vide link abaixo.:
 
-- [Tech Challenge 1](https://github.com/fiap-2nett/tc-fase1)
+- [Tech Challenge 2](https://github.com/fiap-2nett/tc-fase2-pipeline)
+
+O projeto atualizado no Tech Challenge 4 é altamente baseado em Clean Architecture (Arquitetura Limpa), ou seja,
+projetada com foco na separação de preocupações e na dependência de direção única, o que significa que as partes
+mais internas do sistema não conhecem as partes mais externas.
+
+## Documentação de Requisitos
+
+A documentação detalhada de Requisitos Funcionais (RF) e Não Funcionais (RNF) pode ser encontrada na Wiki oficial do projeto.
+Além disso, temos capturas de tela do Portal HelpDesk (UI) em funcionamento.
+Vide link abaixo.:
+
+[Wiki Oficial HelpDesk API](https://github.com/fiap-2nett/tc04-Wiki-temp/wiki)
+
 
 ## Colaboradores
 
@@ -19,6 +31,63 @@ Caso queira verificar o projeto entregue na fase anterior, vide link abaixo.:
 - [Cecília Gonçalves Wlinger](https://www.linkedin.com/in/cec%C3%ADlia-wlinger-6a5459100/) - RM351312
 - [Cesar Julio Spaziante](https://www.linkedin.com/in/cesar-spaziante/) - RM351311
 - [Paulo Felipe do Nascimento de Sousa](https://www.linkedin.com/in/paulo-felipe06/) - RM351707
+
+## Técnologias Utilizadas
+
+- .NET 7.0
+- Entity Framework Core 7.0
+- FluentValidation 11.7
+- FluentAssertions 6.12
+- NetArchTest 1.3
+- Serilog 7.0
+- XUnit 2.4
+- SqlServer 2019
+- Docker 24.0.5
+- Docker Compose 2.20
+
+## Arquitetura, Padrões Arquiteturais e Convenções
+
+- REST Api
+- Clean Architecture
+- EF Code-first
+- Service Pattern
+- Repository Pattern & Unit Of Work
+- Architecture Tests
+- Integration Tests
+- Unit Tests
+
+## Desenho de Arquitetura
+
+A solução foi arquitetada da seguinte maneira.:
+
+![Desenho da Arquitetura](arch_simple_draw.png)
+
+Temos de frente a aplicação HelpDesk.AppService.Web representada na imagem como "WebAppService", que é o Portal HelpDesk (UI) aonde
+os clientes, analistas e administradores farão a iteração com o sistema de atendimento de Ticket.
+As ações efetuadas pelos usuários por meio do Portal do HelpDesk são enviadas enviadas via requisições "Rest API" para a aplicação
+HelpDesk.ApiService.Api representada na imagem como "ApiService" responsável pelo recebimento, processamento e respostas das
+ações dos usuário para o Portal HelpDesk.
+
+## Modelagem de dados
+
+A HelpDesk API utiliza o paradigma de CodeFirst através dos recursos disponibilizados pelo Entity Framework, no entanto para melhor
+entendimento da modelagem de dados apresentamos a seguir o MER e suas respectivas definições:
+
+![DER](der.png)
+
+Com base na imagem acima iremos detalhar as tabelas e os dados contidos em cada uma delas:
+
+| Schema | Tabela       | Descrição                                                                                       |
+|--------|--------------|-------------------------------------------------------------------------------------------------|
+| dbo    | users        | Tabela que contém os dados referentes aos usuários da plataforma.                               |
+| dbo    | roles        | Tabela que contém os dados referentes aos tipos de perfis de usuário da plataforma.             |
+| dbo    | tickets      | Tabela que contém os dados referentes aos tickets criados na plataforma.                        |
+| dbo    | ticketstatus | Tabela que contém os dados referentes aos possíveis status de tickets.                          |
+| dbo    | categories   | Tabela que contém os dados referentes às categorias de tickets.                                 |
+| dbo    | priorities   | Tabela que contém os dados referentes às prioridades/SLAs relacionado as categorias de tickets. |
+
+
+<!--
 
 ## Como funciona a CI/CD Pipeline?
 
