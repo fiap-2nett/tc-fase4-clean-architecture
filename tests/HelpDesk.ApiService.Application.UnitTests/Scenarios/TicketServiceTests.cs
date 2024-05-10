@@ -61,6 +61,7 @@ namespace HelpDesk.ApiService.Application.UnitTests.Scenarios
             // Arrange
             var expectedTicket = TicketList().FirstOrDefault(x => x.IdUserRequester == UserA.Id);
 
+            _dbContextMock.Setup(x => x.Set<User, int>()).ReturnsDbSet(UserList());
             _dbContextMock.Setup(x => x.Set<Ticket, int>()).ReturnsDbSet(TicketList());
             _dbContextMock.Setup(x => x.Set<Category, int>()).ReturnsDbSet(CategoryList());
             _dbContextMock.Setup(x => x.Set<TicketStatus, byte>()).ReturnsDbSet(TicketStatusList());
@@ -82,8 +83,8 @@ namespace HelpDesk.ApiService.Application.UnitTests.Scenarios
             testResult.Category.Should().NotBeNull();
             testResult.Category.IdCategory.Should().Be(expectedTicket.IdCategory);
             testResult.Category.Name.Should().Be(CategoryList().FirstOrDefault(x => x.Id == expectedTicket.IdCategory).Name);
-            testResult.IdUserAssigned.Should().Be(expectedTicket.IdUserAssigned);
-            testResult.IdUserAssigned.Should().Be(expectedTicket.IdUserAssigned);
+            testResult.UserRequester.IdUser.Should().Be(expectedTicket.IdUserRequester);
+            testResult.UserAssigned?.IdUser.Should().Be(expectedTicket.IdUserAssigned);
             testResult.CreatedAt.Date.Should().Be(expectedTicket.CreatedAt.Date);
             testResult.LastUpdatedAt.Should().Be(expectedTicket.LastUpdatedAt);
             testResult.LastUpdatedBy.Should().Be(expectedTicket.LastUpdatedBy);
@@ -121,6 +122,7 @@ namespace HelpDesk.ApiService.Application.UnitTests.Scenarios
         public async Task GetTicketByIdAsync_Should_ThrowNotFoundException_WhenInvalidIdTicket()
         {
             // Arrange
+            _dbContextMock.Setup(x => x.Set<User, int>()).ReturnsDbSet(UserList());
             _dbContextMock.Setup(x => x.Set<Ticket, int>()).ReturnsDbSet(TicketList());
             _dbContextMock.Setup(x => x.Set<Category, int>()).ReturnsDbSet(CategoryList());
             _dbContextMock.Setup(x => x.Set<TicketStatus, byte>()).ReturnsDbSet(TicketStatusList());
@@ -147,6 +149,7 @@ namespace HelpDesk.ApiService.Application.UnitTests.Scenarios
             // Arrange
             var expectedTicket = TicketList().FirstOrDefault(x => x.IdUserRequester == UserA.Id);
 
+            _dbContextMock.Setup(x => x.Set<User, int>()).ReturnsDbSet(UserList());
             _dbContextMock.Setup(x => x.Set<Ticket, int>()).ReturnsDbSet(TicketList());
             _dbContextMock.Setup(x => x.Set<Category, int>()).ReturnsDbSet(CategoryList());
             _dbContextMock.Setup(x => x.Set<TicketStatus, byte>()).ReturnsDbSet(TicketStatusList());
@@ -172,6 +175,7 @@ namespace HelpDesk.ApiService.Application.UnitTests.Scenarios
             // Arrange
             var expectedTicket = TicketList().FirstOrDefault(x => x.IdUserRequester == UserA.Id);
 
+            _dbContextMock.Setup(x => x.Set<User, int>()).ReturnsDbSet(UserList());
             _dbContextMock.Setup(x => x.Set<Ticket, int>()).ReturnsDbSet(TicketList());
             _dbContextMock.Setup(x => x.Set<Category, int>()).ReturnsDbSet(CategoryList());
             _dbContextMock.Setup(x => x.Set<TicketStatus, byte>()).ReturnsDbSet(TicketStatusList());
@@ -201,6 +205,7 @@ namespace HelpDesk.ApiService.Application.UnitTests.Scenarios
             // Arrange
             var userPerformedAction = UserA;
 
+            _dbContextMock.Setup(x => x.Set<User, int>()).ReturnsDbSet(UserList());
             _dbContextMock.Setup(x => x.Set<Ticket, int>()).ReturnsDbSet(TicketList());
             _dbContextMock.Setup(x => x.Set<Category, int>()).ReturnsDbSet(CategoryList());
             _dbContextMock.Setup(x => x.Set<TicketStatus, byte>()).ReturnsDbSet(TicketStatusList());
@@ -253,6 +258,7 @@ namespace HelpDesk.ApiService.Application.UnitTests.Scenarios
             // Arrange
             var userPerformedAction = UserA;
 
+            _dbContextMock.Setup(x => x.Set<User, int>()).ReturnsDbSet(UserList());
             _dbContextMock.Setup(x => x.Set<Ticket, int>()).ReturnsDbSet(TicketList());
             _dbContextMock.Setup(x => x.Set<Category, int>()).ReturnsDbSet(CategoryList());
             _dbContextMock.Setup(x => x.Set<TicketStatus, byte>()).ReturnsDbSet(TicketStatusList());
@@ -269,7 +275,7 @@ namespace HelpDesk.ApiService.Application.UnitTests.Scenarios
             testResult.Page.Should().Be(1);
             testResult.PageSize.Should().Be(10);
             testResult.Items.IsNullOrEmpty().Should().BeFalse();
-            testResult.Items.All(x => x.IdUserRequester == userPerformedAction.Id).Should().BeTrue();
+            testResult.Items.All(x => x.UserRequester.IdUser == userPerformedAction.Id).Should().BeTrue();
             testResult.TotalCount.Should().Be(TicketList().Count(x => x.IdUserRequester == userPerformedAction.Id));
 
             _userRepositoryMock.Verify(x => x.GetByIdAsync(It.IsAny<int>()), Times.Once);
@@ -281,6 +287,7 @@ namespace HelpDesk.ApiService.Application.UnitTests.Scenarios
             // Arrange
             var userPerformedAction = AnalystA;
 
+            _dbContextMock.Setup(x => x.Set<User, int>()).ReturnsDbSet(UserList());
             _dbContextMock.Setup(x => x.Set<Ticket, int>()).ReturnsDbSet(TicketList());
             _dbContextMock.Setup(x => x.Set<Category, int>()).ReturnsDbSet(CategoryList());
             _dbContextMock.Setup(x => x.Set<TicketStatus, byte>()).ReturnsDbSet(TicketStatusList());
@@ -297,7 +304,7 @@ namespace HelpDesk.ApiService.Application.UnitTests.Scenarios
             testResult.Page.Should().Be(1);
             testResult.PageSize.Should().Be(10);
             testResult.Items.IsNullOrEmpty().Should().BeFalse();
-            testResult.Items.All(x => x.IdUserRequester == userPerformedAction.Id || x.IdUserAssigned == userPerformedAction.Id || x.IdUserAssigned == null).Should().BeTrue();
+            testResult.Items.All(x => x.UserRequester.IdUser == userPerformedAction.Id || (x.UserAssigned == null || x.UserAssigned.IdUser == userPerformedAction.Id)).Should().BeTrue();
             testResult.TotalCount.Should().Be(TicketList().Count(x => x.IdUserRequester == userPerformedAction.Id || x.IdUserAssigned == userPerformedAction.Id || x.IdUserAssigned == null));
 
             _userRepositoryMock.Verify(x => x.GetByIdAsync(It.IsAny<int>()), Times.Once);
@@ -309,6 +316,7 @@ namespace HelpDesk.ApiService.Application.UnitTests.Scenarios
             // Arrange
             var userPerformedAction = Admin;
 
+            _dbContextMock.Setup(x => x.Set<User, int>()).ReturnsDbSet(UserList());
             _dbContextMock.Setup(x => x.Set<Ticket, int>()).ReturnsDbSet(TicketList());
             _dbContextMock.Setup(x => x.Set<Category, int>()).ReturnsDbSet(CategoryList());
             _dbContextMock.Setup(x => x.Set<TicketStatus, byte>()).ReturnsDbSet(TicketStatusList());
@@ -336,6 +344,7 @@ namespace HelpDesk.ApiService.Application.UnitTests.Scenarios
             // Arrange
             var userPerformedAction = Admin;
 
+            _dbContextMock.Setup(x => x.Set<User, int>()).ReturnsDbSet(Enumerable.Empty<User>());
             _dbContextMock.Setup(x => x.Set<Ticket, int>()).ReturnsDbSet(Enumerable.Empty<Ticket>());
             _dbContextMock.Setup(x => x.Set<Category, int>()).ReturnsDbSet(Enumerable.Empty<Category>());
             _dbContextMock.Setup(x => x.Set<TicketStatus, byte>()).ReturnsDbSet(Enumerable.Empty<TicketStatus>());

@@ -33,8 +33,8 @@
             <td>@ticket.Description</td>
             <td>@ticket.Category?.Name</td>
             <td><span class="@GetStatusBadge(ticket.Status)">@ticket.Status?.Name</span></td>
-            <td>@ticket.IdUserRequester</td>
-            <td>@ticket.IdUserAssigned</td>
+            <td>@ticket.UserRequester.FullName</td>
+            <td>@ticket.UserAssigned?.FullName</td>
             <td>
                 <div class="dropdown">
                     <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="bx bx-dots-vertical-rounded"></i></button>

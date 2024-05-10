@@ -77,7 +77,7 @@ namespace HelpDesk.ApiService.Api.IntegrationTests.Scenarios
 
             responseContent.Items.Should().NotBeNullOrEmpty();
             responseContent.Items.Should().HaveCountLessThanOrEqualTo(parameters.PageSize);
-            responseContent.Items.All(x => x.IdUserRequester == userRequester.Id).Should().BeTrue();
+            responseContent.Items.All(x => x.UserRequester.IdUser == userRequester.Id).Should().BeTrue();
         }
 
         #endregion
@@ -127,8 +127,8 @@ namespace HelpDesk.ApiService.Api.IntegrationTests.Scenarios
             responseContent.LastUpdatedAt.Should().Be(targetTicket.LastUpdatedAt);
             responseContent.LastUpdatedBy.Should().Be(targetTicket.LastUpdatedBy);
             responseContent.CancellationReason.Should().Be(targetTicket.CancellationReason);
-            responseContent.IdUserRequester.Should().Be(targetTicket.IdUserRequester);
-            responseContent.IdUserAssigned.Should().Be(targetTicket.IdUserAssigned);
+            responseContent.UserRequester.IdUser.Should().Be(targetTicket.IdUserRequester);
+            responseContent.UserAssigned.IdUser.Should().Be(targetTicket.IdUserAssigned);
 
             responseContent.Category.Should().NotBeNull();
             responseContent.Category.IdCategory.Should().Be(ticketCategory.Id);

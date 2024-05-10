@@ -25,6 +25,7 @@ namespace HelpDesk.ApiService.Domain.Entities
         public string Name { get; private set; }
         public string Surname { get; private set; }
         public Email Email { get; private set; }
+        public virtual string FullName => string.Concat(Name, " ", Surname);
 
         public bool IsDeleted { get; private set; }
         public DateTime CreatedAt { get; private set; }
