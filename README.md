@@ -74,7 +74,7 @@ ações dos usuário para o Portal HelpDesk.
 A HelpDesk API utiliza o paradigma de CodeFirst através dos recursos disponibilizados pelo Entity Framework, no entanto para melhor
 entendimento da modelagem de dados apresentamos a seguir o MER e suas respectivas definições:
 
-![DER](der.png)
+![DER](DER.png)
 
 Com base na imagem acima iremos detalhar as tabelas e os dados contidos em cada uma delas:
 
