@@ -15,6 +15,10 @@ O projeto atualizado no Tech Challenge 4 é altamente baseado em Clean Architect
 projetada com foco na separação de preocupações e na dependência de direção única, o que significa que as partes
 mais internas do sistema não conhecem as partes mais externas.
 
+Além disso o projeto mantém uma abordagem focada na modelagem de domínios "Domain-Driven Design" (DDD) conforme visto durante o Tech Challenge 1,
+ou seja, busca alinhar o desenvolvimento da solução com o domínio do problema, resultando em sistemas mais flexíveis,
+compreensíveis e que melhor atendem às necessidades do negócio.
+
 ## Documentação de Requisitos
 
 A documentação detalhada de Requisitos Funcionais (RF) e Não Funcionais (RNF) pode ser encontrada na Wiki oficial do projeto.
@@ -63,11 +67,24 @@ A solução foi arquitetada da seguinte maneira.:
 
 ![Desenho da Arquitetura](arch_simple_draw.png)
 
-Temos de frente a aplicação HelpDesk.AppService.Web representada na imagem como "WebAppService", que é o Portal HelpDesk (UI) onde
+Temos de frente a aplicação HelpDesk.AppService representada na imagem como "WebAppService", que é o Portal HelpDesk (UI) onde
 os clientes, analistas e administradores farão a iteração com o sistema de atendimento de Ticket.
 As ações efetuadas pelos usuários por meio do Portal do HelpDesk são enviadas enviadas via requisições "Rest API" para a aplicação
-HelpDesk.ApiService.Api representada na imagem como "ApiService" responsável pelo recebimento, processamento e respostas das
+HelpDesk.ApiService representada na imagem como "ApiService" responsável pelo recebimento, processamento e respostas das
 ações dos usuário para o Portal HelpDesk.
+
+Ou seja, a parte de apresentação ao usuário fica concentrada no projeto HelpDesk.AppService enquanto toda a lógica de negócio fica isolada no projeto
+HelpDesk.ApiService o que corrobora com o desacoplamento dos componentes de nossa solução
+
+
+Ambos os projetos contam com a mesma estruturação de arquitetura, vide à seguir.:
+
+| Camada                                           | Descrição                                                                                                                                                      |
+|--------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Presentation                                     | Contempla a parte de iteração dos usuários, bem como os endpoints disponiveis para receber requisições de API.                                                 |
+| Application                                      | Responsável por integrar e intermediar as camadas de "Presentation" e "Domain". No Portal HelpDesk por exemplo, coordena as operações entre a UI e o "Domain". |
+| Domain                                           | Camada que concentra toda à regra de negócio da aplicação, com todos os componentes de domínio que são imprescindíveis ao negócio. Seria o "coração" da aplicação se fizessemos uma analogia.|
+| Infrastructure                                   | Fornece acesso à todos os recursos técnicos necessários para o funcionamento da solução como Banco de Dados, Logs, Gerenciamento de Arquivos, APIs Externas. Em resumo essa camada contém componentes que lidam com detalhes de baixo nível e são geralmente independentes das regras de negócio da aplicação.|
 
 ## Modelagem de dados
 
