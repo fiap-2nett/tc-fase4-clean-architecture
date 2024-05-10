@@ -20,9 +20,9 @@
     const toastPlacementExampleBody = document.querySelector('.toast-body');
     let toastType, toastPlacement;
 
-    let actionButtons = document.querySelectorAll('.hd-action-button');
-    actionButtons.forEach(item => {        
-        item.addEventListener('click', event => {
+    bindActionButtons = function () {
+        let actionButtons = document.querySelectorAll('.hd-action-button');
+        $('.hd-action-button').off('click').on('click', event => {
             event.preventDefault();
 
             const { ticketId, actionType } = event.target.dataset;
@@ -42,16 +42,18 @@
                     .done(data =>
                     {
                         modalAction.html(data.partialView);
-                        modalAction.on('shown.bs.modal', () => bindModalObjects(actionType)).modal('show');                    
-                    });   
+                        modalAction.off('shown.bs.modal').on('shown.bs.modal', function () {
+                            bindModalObjects(actionType);
+                        }).modal('show');
+                    });
             }
         });
-    });
+    }
 
     const bindModalObjects = function (actionType) {
-        let formAction = document.getElementById('formTicketAction');
-        if (formAction) {
-            $(formAction).validate();
+        let formAction = $('#formTicketAction');
+        if (formAction.length > 0) {
+            formAction.validate();
 
             if ([ActionType.Create, ActionType.Edit].includes(Number(actionType)))
             {
@@ -71,7 +73,7 @@
                 $('#CancellationReason').rules('add', { required: true });
             }
             
-            formAction.addEventListener('submit', event => {
+            formAction.off('submit').on('submit', event => {
                 event.preventDefault();
                 
                 const form = event.target;
@@ -86,7 +88,7 @@
         }
     }
 
-    function toastDispose(toast) {
+    const toastDispose = function (toast) {
         if (toast && toast._element !== null) {
             if (toastPlacementExample) {
                 toastPlacementExample.classList.remove(toastType);                
@@ -96,7 +98,7 @@
         }
     }
 
-    function toastApply(data) {        
+    const toastApply = function (data) {
         if (toastPlacement) {
             toastDispose(toastPlacement);
         }
@@ -123,12 +125,22 @@
         toastPlacementExampleTitle.innerHTML = toastTitle;
         toastPlacementExampleBody.innerHTML = toastBody;        
 
-        toastPlacement = new bootstrap.Toast(toastPlacementExample);
+        toastPlacement = new bootstrap.Toast(toastPlacementExample);        
         toastPlacement.show();
 
         if (data.isSuccess) {
             modalAction.modal('hide');
+            reloadTickets();
         }
     }
 
+    const reloadTickets = function () {        
+        $.get('/Home/Tickets')
+            .done(data => {
+                $('#tableTickets tbody').html(data.partialView);
+                bindActionButtons();
+            });
+    }
+
+    bindActionButtons();
 })();
