@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using HelpDesk.AppService.Application.Core.Abstractions.Services;
+using HelpDesk.AppService.Web.Extensions;
 using HelpDesk.AppService.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -34,6 +35,18 @@ namespace HelpDesk.AppService.Web.Controllers
         {
             var model = await _ticketService.GetTicketsAsync();
             return View(model);
+        }
+
+        [HttpGet]
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public async Task<IActionResult> Tickets()
+        {
+            var model = await _ticketService.GetTicketsAsync();
+
+            return Json(new
+            {
+                PartialView = await this.RenderViewToStringAsync("~/Views/Home/_Partials/_TableRows.cshtml", model?.Items)
+            });
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
