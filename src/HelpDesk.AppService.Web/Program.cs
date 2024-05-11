@@ -34,16 +34,12 @@ namespace HelpDesk.AppService.Web
             app.UseHttpsRedirection();
             app.UseSerilogRequestLogging();
             app.UseStaticFiles();
-
             app.UseRouting();
-
             app.UseAuthentication();
             app.UseAuthorization();
-
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
-            
+                pattern: "{controller=Home}/{action=Index}/{id?}");            
             app.MapControllers();
 
             app.Run();

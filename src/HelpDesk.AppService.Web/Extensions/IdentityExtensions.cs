@@ -13,7 +13,7 @@ namespace HelpDesk.AppService.Web.Extensions
         public static string GetEmail(this IIdentity identity)
             => ((ClaimsIdentity)identity)?.FindFirst(ClaimTypes.Email)?.Value;
 
-        public static string GetFullname(this IIdentity identity)
+        public static string GetFullName(this IIdentity identity)
             => string.Concat(((ClaimsIdentity)identity)?.FindFirst(ClaimTypes.Name)?.Value, " ", ((ClaimsIdentity)identity)?.FindFirst(ClaimTypes.Surname)?.Value);
 
         #endregion

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using HelpDesk.ApiService.Application.Contracts.Category;
 using HelpDesk.ApiService.Application.Contracts.Common;
 using HelpDesk.ApiService.Application.Contracts.Tickets;
+using HelpDesk.ApiService.Application.Contracts.Users;
 using HelpDesk.ApiService.Application.Core.Abstractions.Data;
 using HelpDesk.ApiService.Application.Core.Abstractions.Services;
 using HelpDesk.ApiService.Domain.Entities;
@@ -56,6 +57,11 @@ namespace HelpDesk.ApiService.Application.Services
                     on ticket.IdStatus equals status.Id
                 join category in _dbContext.Set<Category, int>().AsNoTracking()
                     on ticket.IdCategory equals category.Id
+                join userRequester in _dbContext.Set<User, int>().AsNoTracking()
+                    on ticket.IdUserRequester equals userRequester.Id
+                join userAssigned in _dbContext.Set<User, int>().AsNoTracking()
+                    on ticket.IdUserAssigned equals userAssigned.Id into tmp
+                    from userAssigned in tmp.DefaultIfEmpty()
                 where
                     ticket.Id == idTicket
                 select new DetailedTicketResponse
@@ -64,8 +70,10 @@ namespace HelpDesk.ApiService.Application.Services
                     Description = ticket.Description,
                     Status = new StatusResponse { IdStatus = status.Id, Name = status.Name },
                     Category = new CategoryResponse { IdCategory = category.Id, Name = category.Name },
-                    IdUserRequester = ticket.IdUserRequester,
-                    IdUserAssigned = ticket.IdUserAssigned,
+                    UserRequester = new UserResponse { IdUser = userRequester.Id, FullName = userRequester.FullName },
+                    UserAssigned = userAssigned != null
+                        ? new UserResponse { IdUser = userAssigned.Id, FullName = userAssigned.FullName }
+                        : null,
                     CreatedAt = ticket.CreatedAt,
                     LastUpdatedAt = ticket.LastUpdatedAt,
                     LastUpdatedBy = ticket.LastUpdatedBy,
@@ -76,10 +84,10 @@ namespace HelpDesk.ApiService.Application.Services
             if (ticketResult is null)
                 throw new NotFoundException(DomainErrors.Ticket.NotFound);
 
-            if (userPerformedAction.IdRole == (byte)UserRoles.General && ticketResult.IdUserRequester != userPerformedAction.Id)
+            if (userPerformedAction.IdRole == (byte)UserRoles.General && ticketResult.UserRequester.IdUser != userPerformedAction.Id)
                 throw new InvalidPermissionException(DomainErrors.User.InvalidPermissions);
 
-            if (userPerformedAction.IdRole == (byte)UserRoles.Analyst && ticketResult.IdUserRequester != userPerformedAction.Id && ticketResult.IdUserAssigned != userPerformedAction.Id)
+            if (userPerformedAction.IdRole == (byte)UserRoles.Analyst && ticketResult.UserRequester.IdUser != userPerformedAction.Id && ticketResult.UserAssigned?.IdUser != userPerformedAction.Id)
                 throw new InvalidPermissionException(DomainErrors.User.InvalidPermissions);
 
             return ticketResult;
@@ -97,22 +105,29 @@ namespace HelpDesk.ApiService.Application.Services
                     on ticket.IdStatus equals status.Id
                 join category in _dbContext.Set<Category, int>().AsNoTracking()
                     on ticket.IdCategory equals category.Id
+                join userRequester in _dbContext.Set<User, int>().AsNoTracking()
+                    on ticket.IdUserRequester equals userRequester.Id
+                join userAssigned in _dbContext.Set<User, int>().AsNoTracking()
+                    on ticket.IdUserAssigned equals userAssigned.Id into tmp
+                    from userAssigned in tmp.DefaultIfEmpty()
                 select new TicketResponse
                 {
                     IdTicket = ticket.Id,
                     Description = ticket.Description,
                     Status = new StatusResponse { IdStatus = status.Id, Name = status.Name },
                     Category = new CategoryResponse { IdCategory = category.Id, Name = category.Name },
-                    IdUserRequester = ticket.IdUserRequester,
-                    IdUserAssigned = ticket.IdUserAssigned
+                    UserRequester = new UserResponse { IdUser = userRequester.Id, FullName = userRequester.FullName },
+                    UserAssigned = userAssigned != null
+                        ? new UserResponse { IdUser = userAssigned.Id, FullName = userAssigned.FullName }
+                        : null
                 }
             ;
 
             if (userPerformedAction.IdRole == (byte)UserRoles.General)
-                ticketsQuery = ticketsQuery.Where(t => t.IdUserRequester == userPerformedAction.Id);
+                ticketsQuery = ticketsQuery.Where(t => t.UserRequester.IdUser == userPerformedAction.Id);
 
             if (userPerformedAction.IdRole == (byte)UserRoles.Analyst)
-                ticketsQuery = ticketsQuery.Where(t => t.IdUserRequester == userPerformedAction.Id || t.IdUserAssigned == userPerformedAction.Id || t.IdUserAssigned == null);
+                ticketsQuery = ticketsQuery.Where(t => t.UserRequester.IdUser == userPerformedAction.Id || (t.UserAssigned == null || t.UserAssigned.IdUser == userPerformedAction.Id));
 
             var totalCount = await ticketsQuery.CountAsync();
 

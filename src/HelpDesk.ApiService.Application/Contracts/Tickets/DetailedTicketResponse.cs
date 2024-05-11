@@ -1,5 +1,6 @@
 using System;
 using HelpDesk.ApiService.Application.Contracts.Category;
+using HelpDesk.ApiService.Application.Contracts.Users;
 
 namespace HelpDesk.ApiService.Application.Contracts.Tickets
 {
@@ -51,11 +52,11 @@ namespace HelpDesk.ApiService.Application.Contracts.Tickets
         /// <summary>
         /// Gets or sets the ticket id user requester.
         /// </summary>
-        public int IdUserRequester { get; set; }
+        public UserResponse UserRequester { get; set; }
 
         /// <summary>
         /// Gets or sets the ticket id user assigned.
         /// </summary>
-        public int? IdUserAssigned { get; set; }
+        public UserResponse UserAssigned { get; set; }
     }
 }

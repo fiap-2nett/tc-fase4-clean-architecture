@@ -1,11 +1,9 @@
 [![tc-fase4-clean-architecture](https://github.com/fiap-2nett/tc-fase4-clean-architecture/actions/workflows/dotnet.yml/badge.svg?branch=main)](https://github.com/fiap-2nett/tc-fase4-clean-architecture/actions/workflows/dotnet.yml)
 
-TODO: Arquivo README precisa ser revisitado e atualizado
-
 # Clean Architecture
 
 Com o objetivo de manter o foco na criação de uma solução aderente ao Clean Architecture (Arquitetura Limpa) que é um dos entregáveis
-do Tech Challenge 4. Foi reaproveitado o trabalho entregue no Tech Challenge 2 
+do Tech Challenge 4. Foi reaproveitado o trabalho entregue no Tech Challenge 2
 
 Caso queira verificar o projeto entregue na fase anterior, vide link abaixo.:
 
@@ -44,6 +42,7 @@ Vide link abaixo.:
 - FluentAssertions 6.12
 - NetArchTest 1.3
 - Serilog 7.0
+- Seq
 - XUnit 2.4
 - SqlServer 2019
 - Razor
@@ -65,7 +64,7 @@ Vide link abaixo.:
 
 A solução foi arquitetada da seguinte maneira.:
 
-![Desenho da Arquitetura](arch_simple_draw.png)
+![Desenho da Arquitetura](doc/assets/img/arch_simple_draw.png)
 
 Temos de frente a aplicação HelpDesk.AppService representada na imagem como "WebAppService", que é o Portal HelpDesk (UI) onde
 os clientes, analistas e administradores farão a iteração com o sistema de atendimento de Ticket.
@@ -91,7 +90,7 @@ Ambos os projetos contam com a mesma estruturação de arquitetura, vide à segu
 A HelpDesk API utiliza o paradigma de CodeFirst através dos recursos disponibilizados pelo Entity Framework, no entanto para melhor
 entendimento da modelagem de dados apresentamos a seguir o MER e suas respectivas definições:
 
-![DER](DER.png)
+![DER](doc/assets/img/DER.png)
 
 Com base na imagem acima iremos detalhar as tabelas e os dados contidos em cada uma delas:
 
@@ -110,7 +109,7 @@ A HelpDesk API utiliza como banco de dados o SQL Server 2019 e para o Frontend f
 Toda a infraestrutura necessária para execução deve ser provisionada automaticamente configurando
 o docker-compose como projeto de inicialização no Visual Studio.
 
-![StartupProject](startup_project.png)
+![StartupProject](doc/assets/img/startup_project.png)
 
 Também é possível executar a solução diretamente sem a necessidade do Visual Studio, para tal apenas necessitamos
 do Docker previamente instalado. Para executar a solução diretamente através do Docker, abra um terminal no diretório
@@ -122,7 +121,7 @@ $ docker compose up -d
 
 Após rodar o projeto a iteração pode ser feita pelo link abaixo.:
 
-https://localhost:7238/
+https://localhost:5002/
 
 Alguns usuários fictícios com diferentes perfis de acesso são criados para logar e testar o Portal Helpdesk:
 
@@ -137,11 +136,11 @@ Alguns usuários fictícios com diferentes perfis de acesso são criados para lo
 
 Porém, caso queira você poderá criar o seu próprio usuário através da opção "Create an account".:
 
-![Login](login.png)
+![Login](doc/assets/img/login.png)
 
 Depois basta preencher os dados cadastrais.:
 
-![CreatingUser](creating_user.png)
+![CreatingUser](doc/assets/img/creating_user.png)
 
 *Observação: para novos usuários será atribuído o perfil Geral.*
 
@@ -150,14 +149,14 @@ Depois basta preencher os dados cadastrais.:
 Caso deseje testar somente a API que integra o Backend do Portal HelpDesk é possível executar os passos e comandos do tópico anterior,
 entretanto, uma vez que o projeto esteja executado deve-se acessar o seguinte link.:
 
-https://localhost:7002/swagger/index.html
+https://localhost:5001/swagger/index.html
 
 ## Testes Unitários, Integração e Arquiteturais
 
 A HelpDesk disponibiliza testes automatizados para garantir que o processo contempla as regras de negócio pré-definidas no requisito
 do projeto. Os testes são executados via Github CI/CD Pipeline conforme aprendemos durante o Tech Challenge 2.:
 
-![CI/CD Testes Pipeline](test_flow.png)
+![CI/CD Testes Pipeline](doc/assets/img/test_flow.png)
 
 Se preferir, os testes também podem ser executados localmente via dotnet CLI. Para isso rode os comandos abaixo.:
 ```sh
@@ -180,12 +179,9 @@ $ dotnet test --logger "console;verbosity=detailed" <arquivo_do_projeto_do_teste
 
 ## Rastreabilidade com Logs
 
-Para acompanhamento de Logging estamos utilizando o Serilog para a captura e armazenamento de logs de maneira estruturada,
+Para acompanhamento de Logging estamos utilizando o Serilog, para a captura e armazenamento de logs de maneira estruturada o Seq,
 o que facilita a análise e a extração de insights a partir dos logs gerados pela aplicação.
 
-Uma vez que o projeto executado, você pode conferir o Serilog pelo seguinte link.:
+Uma vez que o projeto executado, você pode conferir os logs através do Seq pelo seguinte link:
 
-https://localhost:8081/
-
-
-
+http://localhost:8081/
