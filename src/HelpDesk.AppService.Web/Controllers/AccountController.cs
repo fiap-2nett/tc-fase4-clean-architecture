@@ -95,20 +95,6 @@ namespace HelpDesk.AppService.Web.Controllers
             return RedirectToAction(nameof(HomeController.Index), "Home");
         }
 
-        [HttpPost]        
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var result = await _accountService.ChangePasswordAsync(model.Password);
-                if (!result.IsSuccess)
-                    ModelState.AddErrors(result.Errors);
-            }
-
-            return PartialView("~/Views/Account/_Partials/_ChangePassword", model);
-        }
-
         [HttpGet]
         public async Task<IActionResult> Settings()
         {
@@ -130,6 +116,34 @@ namespace HelpDesk.AppService.Web.Controllers
                 var result = await _accountService.UpdateAsync(model.Name, model.Surname);
                 if (!result.IsSuccess)
                     ModelState.AddErrors(result.Errors);
+            }
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ChangePassword()
+        {
+            var result = await _accountService.GetAsync();
+            if (!result.IsSuccess)
+                throw new Exception("An error occurred while processing the request.");
+
+            var model = new ChangePasswordViewModel { Email = result.User.Email };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _accountService.ChangePasswordAsync(model.Password);
+                if (result.IsSuccess)
+                    return RedirectToAction(nameof(AccountController.Logout));
+
+                ModelState.AddErrors(result.Errors);
             }
 
             return View(model);
