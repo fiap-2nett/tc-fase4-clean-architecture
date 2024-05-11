@@ -55,4 +55,4 @@ services:
       - "5002:443"
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ./docker/aspnet/https:/root/.aspnet/https:ro
