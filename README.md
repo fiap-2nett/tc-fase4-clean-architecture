@@ -3,14 +3,14 @@
 # Clean Architecture
 
 Com o objetivo de manter o foco na criação de uma solução aderente ao Clean Architecture (Arquitetura Limpa) que é um dos entregáveis
-do Tech Challenge 4. Foi reaproveitado o trabalho entregue no Tech Challenge 2
+do Tech Challenge 4. Foi reaproveitado o trabalho entregue no Tech Challenge 2.
 
 Caso queira verificar o projeto entregue na fase anterior, vide link abaixo.:
 
 - [Tech Challenge 2](https://github.com/fiap-2nett/tc-fase2-pipeline)
 
 O projeto atualizado no Tech Challenge 4 é altamente baseado em Clean Architecture (Arquitetura Limpa), ou seja,
-projetada com foco na separação de preocupações e na dependência de direção única, o que significa que as partes
+projetado com foco na separação de preocupações e na dependência de direção única, o que significa que as partes
 mais internas do sistema não conhecem as partes mais externas.
 
 Além disso o projeto mantém uma abordagem focada na modelagem de domínios "Domain-Driven Design" (DDD) conforme visto durante o Tech Challenge 1,
@@ -20,10 +20,10 @@ compreensíveis e que melhor atendem às necessidades do negócio.
 ## Documentação de Requisitos
 
 A documentação detalhada de Requisitos Funcionais (RF) e Não Funcionais (RNF) pode ser encontrada na Wiki oficial do projeto.
-Além disso, temos capturas de tela do Portal HelpDesk (UI) em funcionamento.
+Além disso, temos capturas de telas do Portal HelpDesk (UI) em funcionamento.
 Vide link abaixo.:
 
-[Wiki Oficial HelpDesk API](https://github.com/fiap-2nett/tc04-Wiki-temp/wiki)
+[Wiki Oficial HelpDesk API](https://github.com/fiap-2nett/tc-fase4-clean-architecture/wiki)
 
 
 ## Colaboradores
@@ -68,12 +68,12 @@ A solução foi arquitetada da seguinte maneira.:
 
 Temos de frente a aplicação HelpDesk.AppService representada na imagem como "WebAppService", que é o Portal HelpDesk (UI) onde
 os clientes, analistas e administradores farão a iteração com o sistema de atendimento de Ticket.
-As ações efetuadas pelos usuários por meio do Portal do HelpDesk são enviadas enviadas via requisições "Rest API" para a aplicação
+As ações efetuadas pelos usuários por meio do Portal do HelpDesk são enviadas via requisições "Rest API" para a aplicação
 HelpDesk.ApiService representada na imagem como "ApiService" responsável pelo recebimento, processamento e respostas das
 ações dos usuário para o Portal HelpDesk.
 
-Ou seja, a parte de apresentação ao usuário fica concentrada no projeto HelpDesk.AppService enquanto toda a lógica de negócio fica isolada no projeto
-HelpDesk.ApiService o que corrobora com o desacoplamento dos componentes de nossa solução
+Ou seja, a parte de apresentação ao usuário está concentrada no projeto HelpDesk.AppService enquanto toda a lógica de negócio está isolada no projeto
+HelpDesk.ApiService o que corrobora com o desacoplamento dos componentes de nossa solução.
 
 
 Ambos os projetos contam com a mesma estruturação de arquitetura, vide à seguir.:
@@ -82,8 +82,8 @@ Ambos os projetos contam com a mesma estruturação de arquitetura, vide à segu
 |--------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Presentation                                     | Contempla a parte de iteração dos usuários, bem como os endpoints disponiveis para receber requisições de API.                                                 |
 | Application                                      | Responsável por integrar e intermediar as camadas de "Presentation" e "Domain". No Portal HelpDesk por exemplo, coordena as operações entre a UI e o "Domain". |
-| Domain                                           | Camada que concentra toda à regra de negócio da aplicação, com todos os componentes de domínio que são imprescindíveis ao negócio. Seria o "coração" da aplicação se fizessemos uma analogia.|
-| Infrastructure                                   | Fornece acesso à todos os recursos técnicos necessários para o funcionamento da solução como Banco de Dados, Logs, Gerenciamento de Arquivos, APIs Externas. Em resumo essa camada contém componentes que lidam com detalhes de baixo nível e são geralmente independentes das regras de negócio da aplicação.|
+| Domain                                           | Camada que concentra toda à regra de negócio da aplicação, com todos os componentes de domínio que são imprescindíveis ao negócio. Seria o "coração" da aplicação se fizéssemos uma analogia.|
+| Infrastructure                                   | Fornece acesso à todos os recursos técnicos necessários para o funcionamento da solução como Banco de Dados, Logs, Gerenciamento de Arquivos e APIs Externas. Em resumo essa camada contém componentes que lidam com detalhes de baixo nível e são geralmente independentes das regras de negócio da aplicação.|
 
 ## Modelagem de dados
 
