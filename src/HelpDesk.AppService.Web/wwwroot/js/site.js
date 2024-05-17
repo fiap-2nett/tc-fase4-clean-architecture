@@ -41,6 +41,11 @@
                 $.get(`/Ticket/GetActionModal?ticketId=${ticketId}&actionType=${actionType}`)
                     .done(data =>
                     {
+                        if (!data.isSuccess) {
+                            toastApply(data);
+                            return;
+                        }
+
                         modalAction.html(data.partialView);
                         modalAction.off('shown.bs.modal').on('shown.bs.modal', function () {
                             bindModalObjects(actionType);

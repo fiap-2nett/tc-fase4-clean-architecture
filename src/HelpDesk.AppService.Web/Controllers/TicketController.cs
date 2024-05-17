@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using HelpDesk.AppService.Application.Core.Abstractions.ExternalService.Models;
 using HelpDesk.AppService.Application.Core.Abstractions.Services;
 using HelpDesk.AppService.Web.Enumerators;
 using HelpDesk.AppService.Web.Extensions;
@@ -45,19 +46,26 @@ namespace HelpDesk.AppService.Web.Controllers
         public async Task<IActionResult> GetActionModal(int ticketId, byte actionType)
         {
             var isSuccess = true;
-            var model  = new TicketActionViewModel { IdTicket = ticketId, IdActionType = actionType };
+            ErrorModel[] errors = default;
+            var model = new TicketActionViewModel { IdTicket = ticketId, IdActionType = actionType };
 
             if (actionType != (byte)ActionType.Create)
             {
                 var result = await _ticketService.GetByIdAsync(ticketId);
-                model.IdUserAssigned = result.Ticket?.IdUserAssigned;
-                model.IdCategory = result.Ticket.Category.IdCategory;
-                model.Description = result.Ticket.Description;
+                if (result.IsSuccess)
+                {
+                    model.IdUserAssigned = result.Ticket?.IdUserAssigned;
+                    model.IdCategory = result.Ticket.Category.IdCategory;
+                    model.Description = result.Ticket.Description;
+                }
+
+                errors = result.Errors;
                 isSuccess = result.IsSuccess;
             }
 
             return Json(new
             {
+                Errors = errors,
                 IsSuccess = isSuccess,
                 PartialView = await this.RenderViewToStringAsync("~/Views/Ticket/_Partials/_ModalAction.cshtml", model)
             });

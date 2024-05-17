@@ -99,7 +99,7 @@ namespace HelpDesk.ApiService.Application.Services
             if (userPerformedAction is null)
                 throw new NotFoundException(DomainErrors.User.NotFound);
 
-            IQueryable<TicketResponse> ticketsQuery =
+            var ticketsQuery =
                 from ticket in _dbContext.Set<Ticket, int>().AsNoTracking()
                 join status in _dbContext.Set<TicketStatus, byte>().AsNoTracking()
                     on ticket.IdStatus equals status.Id
@@ -110,13 +110,14 @@ namespace HelpDesk.ApiService.Application.Services
                 join userAssigned in _dbContext.Set<User, int>().AsNoTracking()
                     on ticket.IdUserAssigned equals userAssigned.Id into tmp
                     from userAssigned in tmp.DefaultIfEmpty()
-                select new TicketResponse
+                select new 
                 {
                     IdTicket = ticket.Id,
-                    Description = ticket.Description,
+                    ticket.Description,
                     Status = new StatusResponse { IdStatus = status.Id, Name = status.Name },
                     Category = new CategoryResponse { IdCategory = category.Id, Name = category.Name },
                     UserRequester = new UserResponse { IdUser = userRequester.Id, FullName = userRequester.FullName },
+                    ticket.IdUserAssigned,
                     UserAssigned = userAssigned != null
                         ? new UserResponse { IdUser = userAssigned.Id, FullName = userAssigned.FullName }
                         : null
@@ -127,13 +128,22 @@ namespace HelpDesk.ApiService.Application.Services
                 ticketsQuery = ticketsQuery.Where(t => t.UserRequester.IdUser == userPerformedAction.Id);
 
             if (userPerformedAction.IdRole == (byte)UserRoles.Analyst)
-                ticketsQuery = ticketsQuery.Where(t => t.UserRequester.IdUser == userPerformedAction.Id || (t.UserAssigned == null || t.UserAssigned.IdUser == userPerformedAction.Id));
+                ticketsQuery = ticketsQuery.Where(t => t.UserRequester.IdUser == userPerformedAction.Id || (t.IdUserAssigned == null || t.IdUserAssigned == userPerformedAction.Id));
 
             var totalCount = await ticketsQuery.CountAsync();
 
             var ticketsReponsePage = await ticketsQuery
                 .Skip((request.Page - 1) * request.PageSize)
                 .Take(request.PageSize)
+                .Select(item => new TicketResponse
+                {
+                    IdTicket = item.IdTicket,
+                    Description = item.Description,
+                    Status = item.Status,
+                    Category = item.Category,
+                    UserRequester = item.UserRequester,
+                    UserAssigned = item.UserAssigned
+                })
                 .ToArrayAsync();
 
             return new PagedList<TicketResponse>(ticketsReponsePage, request.Page, request.PageSize, totalCount);
